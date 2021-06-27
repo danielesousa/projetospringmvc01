@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.cotiinformatica.dto.FuncionarioCadastroDTO;
 import br.com.cotiinformatica.dto.FuncionarioConsultaDTO;
+import br.com.cotiinformatica.dto.FuncionarioEdicaoDTO;
 import br.com.cotiinformatica.entities.Funcionario;
 import br.com.cotiinformatica.enums.SituacaoFuncionario;
 import br.com.cotiinformatica.helpers.DateHelper;
@@ -32,6 +33,9 @@ public class FuncionarioController {
 		// que será aberta por este método..
 		ModelAndView modelAndView = new ModelAndView("funcionario-cadastro");
 
+		// gerando o conteudo para campo de seleçao de situaçao de funcionario...
+		modelAndView.addObject("situacoes", SituacaoFuncionario.values());
+
 		modelAndView.addObject("dto", new FuncionarioCadastroDTO());
 
 		return modelAndView; // segue para a página.
@@ -45,17 +49,17 @@ public class FuncionarioController {
 
 		try {
 
-			String erros= "";
-			
+			String erros = "";
+
 			// verificar se o cpf informado já encontra-se cadastrado na base de dados..
-			if(funcionarioRepository.findByCpf(dto.getCpf()) != null) {
+			if (funcionarioRepository.findByCpf(dto.getCpf()) != null) {
 				erros += "O CPF informado encontra-se cadastrado. Tente outro ";
 			}
-			//verificar se a matricula encontra-se cadastrada na base de dados.
-			if(funcionarioRepository.findByMatricula(dto.getMatricula()) != null) {
+			// verificar se a matricula encontra-se cadastrada na base de dados.
+			if (funcionarioRepository.findByMatricula(dto.getMatricula()) != null) {
 				erros += "A matricula já existe. Tente outra.";
 			}
-			if(erros != "")
+			if (erros != "")
 				throw new Exception(erros);
 
 			Funcionario funcionario = new Funcionario();
@@ -73,7 +77,11 @@ public class FuncionarioController {
 			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
 		}
 
+		// enviando para a página o DTO que fará a coleta de dados
 		modelAndView.addObject("dto", new FuncionarioCadastroDTO());
+
+		// gerando o conteudo para campo de seleçao de situaçao de funcionario...
+		modelAndView.addObject("situacoes", SituacaoFuncionario.values());
 
 		return modelAndView; // segue para a página.
 
@@ -81,64 +89,120 @@ public class FuncionarioController {
 
 	@RequestMapping("/funcionario-consulta")
 	public ModelAndView consulta() {
-		
+
+		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
+
+		try {
+			modelAndView.addObject("listagem_funcionarios", funcionarioRepository.findAll());
+
+		} catch (Exception e) {
+			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
+		}
+		modelAndView.addObject("dto", new FuncionarioConsultaDTO());
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "consultarFuncionarios", method = RequestMethod.POST)
+	public ModelAndView consultarFuncionarios(FuncionarioConsultaDTO dto) {
+		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
+
+		try {
+			// Resgatar as datas de admissão..
+			Date dataInicio = DateHelper.toDate(dto.getDataInicio());
+			Date dataFim = DateHelper.toDate(dto.getDataFim());
+
+			modelAndView.addObject("listagem_funcionarios",
+					funcionarioRepository.findByDataAdmisssao(dataInicio, dataFim));
+
+		} catch (Exception e) {
+			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
+		}
+		modelAndView.addObject("dto", new FuncionarioConsultaDTO());
+		return modelAndView;
+
+	}
+
+	@RequestMapping("excluirFuncionario")
+	public ModelAndView excluirFuncionario(Integer id) {
+		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
+
+		try {
+			// Buscar funcionario no banco através do id..
+			Funcionario funcionario = funcionarioRepository.findById(id);
+
+			// excluir o funcionario
+			funcionarioRepository.delete(funcionario);
+
+			modelAndView.addObject("mensagem_sucesso",
+					"funcionario " + funcionario.getNome() + " excluido com sucesso");
+			modelAndView.addObject("listagem_funcionarios", funcionarioRepository.findAll());
+
+		} catch (Exception e) {
+			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
+		}
+		modelAndView.addObject("dto", new FuncionarioConsultaDTO());
+		return modelAndView;
+	}
+
+	@RequestMapping("/funcionario-edicao")
+	public ModelAndView funcionarioEdicao(Integer id) {
+		ModelAndView modelAndView = new ModelAndView("funcionario-edicao");
+
+		try {
+			// buscar o funcionario no banco de dados através do id...
+			Funcionario funcionario = funcionarioRepository.findById(id);
+
+			// Transferir os dados do funcionario através do DTO.
+			FuncionarioEdicaoDTO dto = new FuncionarioEdicaoDTO();
+
+			dto.setIdFuncionario(funcionario.getIdFuncionario());
+			dto.setNome(funcionario.getNome());
+			dto.setCpf(funcionario.getCpf());
+			dto.setMatricula(funcionario.getMatricula());
+			dto.setDataadmissao(DateHelper.toString(funcionario.getDataAdmissao()));
+			dto.setSituacao(funcionario.getSituacao().toString());
+
+			modelAndView.addObject("dto", dto);
+
+			// gerando o conteudo para campo de seleçao de situaçao de funcionario...
+			modelAndView.addObject("situacoes", SituacaoFuncionario.values());
+
+		} catch (Exception e) {
+			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
+
+		}
+
+		return modelAndView;
+	}
+
+	@RequestMapping(value="atualizarFuncionario", method = RequestMethod.POST)
+	public ModelAndView atualizarFuncionario(FuncionarioEdicaoDTO dto) {
 		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
 		
 		try {
-			modelAndView.addObject("listagem_funcionarios",funcionarioRepository.findAll());
+			//buscar o funcionario no banco atraves do id..
+			Funcionario funcionario = funcionarioRepository.findById(dto.getIdFuncionario());
 			
+			//modificar os dados do funcionario.
+			funcionario.setNome(dto.getNome());
+			funcionario.setDataAdmissao(DateHelper.toDate(dto.getDataadmissao()));
+			funcionario.setSituacao(SituacaoFuncionario.valueOf(dto.getSituacao()));
+			
+			//atualizando no banco de dados.
+			funcionarioRepository.update(funcionario);
+			
+			modelAndView.addObject("mensagem_sucesso", "Funcionario "+ funcionario.getNome() + " Atualizado com sucesso");
+
+			modelAndView.addObject("listagem_funcionarios", funcionarioRepository.findAll());
 			
 		}catch(Exception e) {
-			modelAndView.addObject("mensagem_erro","Ocorreu um erro: " + e.getMessage());
+			modelAndView.addObject("mensagem_erro", "Ocorreu um erro: " + e.getMessage());
 		}
 		modelAndView.addObject("dto", new FuncionarioConsultaDTO());
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="consultarFuncionarios",method= RequestMethod.POST)
-	public ModelAndView consultarFuncionarios(FuncionarioConsultaDTO dto) {
-		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
-		
-		try {
-			//Resgatar as datas de admissão..
-			Date dataInicio= DateHelper.toDate(dto.getDataInicio());
-			Date dataFim= DateHelper.toDate(dto.getDataFim());
-			
-			modelAndView.addObject("listagem_funcionarios", funcionarioRepository.findByDataAdmisssao(dataInicio, dataFim));
-			
-			
-		}catch(Exception e) {
-			modelAndView.addObject("mensagem_erro","Ocorreu um erro: " + e.getMessage());
-		}
-		modelAndView.addObject("dto",new FuncionarioConsultaDTO());
-		return modelAndView;
-		
-	}
 	
-	@RequestMapping("excluirFuncionario")
-	public ModelAndView excluirFuncionario(Integer id) {
-		ModelAndView modelAndView = new ModelAndView("funcionario-consulta");
-		
-		try {
-			//Buscar funcionario no banco através do id..
-			Funcionario funcionario= funcionarioRepository.findById(id);
-			
-			//excluir o funcionario
-			funcionarioRepository.delete(funcionario);
-			
-			modelAndView.addObject("mensagem_sucesso", "funcionario " + funcionario.getNome() + " excluido com sucesso");
-			modelAndView.addObject("listagem_funcionarios", funcionarioRepository.findAll());
-			
-			
-		}catch(Exception e) {
-			modelAndView.addObject("mensagem_erro","Ocorreu um erro: " + e.getMessage());
-		}
-		modelAndView.addObject("dto",new FuncionarioConsultaDTO());
-		return modelAndView;
-	}
-	
-	
-
 	@RequestMapping("/funcionario-relatorio")
 	public String relatorio() {
 		return "funcionario-relatorio";

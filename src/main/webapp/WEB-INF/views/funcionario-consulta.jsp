@@ -9,21 +9,21 @@
 <title>Home</title>
 
 <!--Referencia para o arquivo css-->
-<link rel="stylesheet" href="resources/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="resources/css/bootstrap.min.css" />
 
 <!-- referencias para o jquery dataTable -->
-<link rel="stylesheet" href="resources/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="resources/css/jquery.dataTables.min.css" />
 
 <!-- estilo css para o jquery validate -->
 <style>
 /*Formata as mensagens de erro do Jquery Validate */
-label.error{
-color:#d9534f;
-}
-select.error{
-border:1px solid #d9534f;
+label.error {
+	color: #d9534f;
 }
 
+select.error {
+	border: 1px solid #d9534f;
+}
 </style>
 
 
@@ -69,7 +69,7 @@ border:1px solid #d9534f;
 				Spring MVC com Spring JDBC, Bootstrap e JQUERY.</p>
 		</nav>
 	</div>
-	
+
 	<!-- Mensagem de sucesso -->
 	<c:if test="${not empty mensagem_sucesso }">
 		<div class="alert alert-success alert-dismissible fade show"
@@ -79,7 +79,7 @@ border:1px solid #d9534f;
 				aria-label="Close"></button>
 		</div>
 	</c:if>
-	
+
 	<!-- Mensagem de erro -->
 	<c:if test="${not empty mensagem_erro }">
 		<div class="alert alert-danger alert-dismissible fade show"
@@ -89,23 +89,25 @@ border:1px solid #d9534f;
 				aria-label="Close"></button>
 		</div>
 	</c:if>
-	
 
-	
+
+
 	<div class="container mt-4">
 		<h5>Consulta de Funcionários</h5>
 		<hr>
 
 		<form id="formconsulta" action="consultarFuncionarios" method="post">
-           <label>Pesquisa de Funcionários por tempo de admissão:</label>
+			<label>Pesquisa de Funcionários por tempo de admissão:</label>
 			<div class="row">
 				<div class="col-md-3">
-				<form:input path="dto.dataInicio" id="dataInicio" name="dataInicio" type="date" class="form-control"/>	
+					<form:input path="dto.dataInicio" id="dataInicio" name="dataInicio"
+						type="date" class="form-control" />
 				</div>
 				<div class="col-md-3">
-				<form:input path="dto.dataFim" id="dataFim" name="dataFim" type="date" class="form-control"/>	
+					<form:input path="dto.dataFim" id="dataFim" name="dataFim"
+						type="date" class="form-control" />
 				</div>
-				
+
 				<div class="col-md-4">
 
 					<button class="btn btn-success" type="submit">Realizar
@@ -126,75 +128,81 @@ border:1px solid #d9534f;
 				</tr>
 			</thead>
 			<tbody>
-			<c:forEach items="${listagem_funcionarios}" var="funcionario">
-			
-			<tr>
-					<td>${funcionario.nome}</td>
-					<td>${funcionario.cpf}</td>
-					<td>${funcionario.matricula}</td>
-					<td><fmt:formatDate pattern="EEE dd/MM/yyyy" value ="${funcionario.dataAdmissao}"/></td>
-					<td>${funcionario.situacao}</td>
-					<td><a href="#" class="btn btn-primary btn-sm">Editar</a> <a
-						href="/projetoSpringMVC01/excluirFuncionario?id=${funcionario.idFuncionario }"
-						onclick="return confirm('Deseja realmente excluir o (a) funcionario (a) ${funcionario.nome}?');"
-						 class="btn btn-danger btn-sm">Excluir</a></td>
-				</tr>
-			
-			</c:forEach>
-			
-				
+				<c:forEach items="${listagem_funcionarios}" var="funcionario">
+
+					<tr>
+						<td>${funcionario.nome}</td>
+						<td>${funcionario.cpf}</td>
+						<td>${funcionario.matricula}</td>
+						<td><fmt:formatDate pattern="EEE dd/MM/yyyy"
+								value="${funcionario.dataAdmissao}" /></td>
+						<td>${funcionario.situacao}</td>
+						<td><a
+							href="/projetoSpringMVC01/funcionario-edicao?id=${funcionario.idFuncionario }"
+							class="btn btn-primary btn-sm">Editar </a> <a
+							href="/projetoSpringMVC01/excluirFuncionario?id=${funcionario.idFuncionario }"
+							onclick="return confirm('Deseja realmente excluir o (a) funcionario (a) ${funcionario.nome}?');"
+							class="btn btn-danger btn-sm">Excluir </a></td>
+					</tr>
+
+				</c:forEach>
+
+
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="6"> Quantidade de funcionários: ${listagem_funcionarios.size()}</td>
+					<td colspan="6">Quantidade de funcionários:
+						${listagem_funcionarios.size()}</td>
 				</tr>
 			</tfoot>
 		</table>
-		
+
 	</div>
 
 	<!-- referencia para arquivo JS -->
 	<script src="resources/js/bootstrap.min.js"></script>
-	
+
 	<!-- referencia para o arquivo do jquery -->
 	<script src="resources/js/jquery-3.6.0.min.js"></script>
-	
+
 	<!-- referencias para o jquery validate -->
 	<script src="resources/js/jquery.validate.min.js"></script>
 	<script src="resources/js/messages_pt_BR.min.js"></script>
-	
+
 	<!-- referencias para o jquery dataTable -->
 	<script src="resources/js/jquery.dataTables.min.js"></script>
-	
-	<script>
-	//quando a pagina for carregada faça
-	$(document).ready(function(){
-		
-		//aplicando validaçao ao formulário...
-		$("#formconsulta").validate({
-			//regras de validaçao
-			rules:{
-		"dataInicio" : {
-			required:true
-		},
-		"dataFim" : {
-			required:true
-		}
-				
-			}
-			
-		});
-		
-		//Aplicando a formatação do datatable
-		$("#tabelafuncionarios").DataTable({
-			language:{
-				url:'//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
-			}
-		});
-		
-	})
-	
 
+	<script>
+		//quando a pagina for carregada faça
+		$(document)
+				.ready(
+						function() {
+
+							//aplicando validaçao ao formulário...
+							$("#formconsulta").validate({
+								//regras de validaçao
+								rules : {
+									"dataInicio" : {
+										required : true
+									},
+									"dataFim" : {
+										required : true
+									}
+
+								}
+
+							});
+
+							//Aplicando a formatação do datatable
+							$("#tabelafuncionarios")
+									.DataTable(
+											{
+												language : {
+													url : '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+												}
+											});
+
+						})
 	</script>
 
 </body>

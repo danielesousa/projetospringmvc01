@@ -68,7 +68,7 @@ select.error {
 				Spring MVC com Spring JDBC, Bootstrap e JQUERY.</p>
 		</nav>
 	</div>
-	
+
 	<!-- Mensagem de sucesso -->
 	<c:if test="${not empty mensagem_sucesso }">
 		<div class="alert alert-success alert-dismissible fade show"
@@ -78,7 +78,7 @@ select.error {
 				aria-label="Close"></button>
 		</div>
 	</c:if>
-	
+
 	<!-- Mensagem de erro -->
 	<c:if test="${not empty mensagem_erro }">
 		<div class="alert alert-danger alert-dismissible fade show"
@@ -91,52 +91,50 @@ select.error {
 
 
 	<div class="container mt-4">
-		<h5>Cadastro de Funcionário</h5>
+		<h5>Atualização de Funcionário</h5>
 		<hr>
 
-		<form id="formcadastro" action="cadastrarFuncionario" method="post">
+		<form id="formedicao" action="atualizarFuncionario" method="post">
 			<div class="row">
 				<div class="col-md-4">
+				
+				<label>CPF:<strong>${dto.cpf}</strong></label>
+				<br/>
+				<label>Matrícula:<strong>${dto.matricula}</strong></label>
+				<br/>
+				<br/>
+                     		<!--campo oculto -->
+					<form:input path="dto.idFuncionario" type="hidden" />
+                     					
 					<label>Nome do Funcionário</label>
 					<form:input path="dto.nome" name="nome" id="nome" type="text"
 						class="form-control" placeholder="Ex: Joao da Silva" />
-					<br> <label>CPF</label>
-					<form:input path="dto.cpf" name="cpf" id="cpf" type="text"
-						class="form-control" placeholder="Ex: 123.456.789.00" />
-					<br> <label>Matrícula</label> <form:input path="dto.matricula" name="matricula"
-						id="matricula" type="text" class="form-control"
-						placeholder="Ex: 2021-001" /> <br>
-				</div>
-
-				<div class="col-md-4">
-					<label>Data de Admissão</label>
+					<br /> <label>Data de Admissão</label>
 					<form:input path="dto.dataadmissao" name="dataadmissao"
 						id="dataadmissao" type="date" class="form-control" />
-					<br> <label>Situação do Funcionario</label>
+					<br /> <label>Situação do Funcionario</label>
 					<form:select path="dto.situacao" name="situacao" id="situacao"
 						class="form-select">
 						<option value="">Escolha uma opção</option>
 						<form:options items="${situacoes}"/>
 					</form:select>
+
 				</div>
 			</div>
-			<div>
+<br/>
+			<div class="row">
+				<div class="col-md-4">
 
-				<div class="row">
-					<div class="col-md-4">
-
-						<div class="d-grid gap-2">
-							<button class="btn btn-success" type="submit">Realizar
-								Cadastro</button>
-						</div>
-
+					<div class="d-grid gap-2">
+						<button class="btn btn-success" type="submit">Salvar
+							Alterações</button>
 					</div>
-				</div>
 
+				</div>
 			</div>
 		</form>
-
 	</div>
+
 
 	<!-- referencia para arquivo JS -->
 	<script src="resources/js/bootstrap.min.js"></script>
@@ -155,24 +153,14 @@ select.error {
 		//quando a pagina for carregada faça
 		$(document).ready(function() {
 
-			//aplicando mascara nos campos do formulário..
-			$("#cpf").mask("999.999.999.99");
-			$("#matricula").mask("9999-9999");
-
 			//aplicando validaçao ao formulário...
-			$("#formcadastro").validate({
+			$("#formedicao").validate({
 				//regras de validaçao
 				rules : {
 					"nome" : {
 						required : true,
 						minlength : 6,
 						maxlength : 150
-					},
-					"cpf" : {
-						required : true
-					},
-					"matricula" : {
-						required : true
 					},
 					"dataadmissao" : {
 						required : true
@@ -187,7 +175,7 @@ select.error {
 
 		})
 	</script>
-
+	
 
 </body>
 </html>
