@@ -41,7 +41,7 @@ select.error {
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 					<li class="nav-item"><a class="nav-link active"
-						aria-current="page" href="/projetoSpringMVC01/">Página Inicial</a></li>
+						aria-current="page" href="/projetoSpringMVC01/home">Página Inicial</a></li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
 						role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -59,6 +59,14 @@ select.error {
 									de Funcionários</a></li>
 						</ul></li>
 				</ul>
+				<form class="d-flex">
+					<span class="text-white mt-3" style="margin-right: 20px;">
+						${usuario_autenticado.nome} (${usuario_autenticado.email}) </span> <a
+						href="/projetoSpringMVC01/logout"
+						class="btn btn-outline-secondary mt-2"
+						onclick="return confirm('Deseja realmente sair do sistema?')">
+						Sair do Sistema </a>
+				</form>
 			</div>
 		</div>
 	</nav>
@@ -97,15 +105,12 @@ select.error {
 		<form id="formedicao" action="atualizarFuncionario" method="post">
 			<div class="row">
 				<div class="col-md-4">
-				
-				<label>CPF:<strong>${dto.cpf}</strong></label>
-				<br/>
-				<label>Matrícula:<strong>${dto.matricula}</strong></label>
-				<br/>
-				<br/>
-                     		<!--campo oculto -->
+
+					<label>CPF:<strong>${dto.cpf}</strong></label> <br /> <label>Matrícula:<strong>${dto.matricula}</strong></label>
+					<br /> <br />
+					<!--campo oculto -->
 					<form:input path="dto.idFuncionario" type="hidden" />
-                     					
+
 					<label>Nome do Funcionário</label>
 					<form:input path="dto.nome" name="nome" id="nome" type="text"
 						class="form-control" placeholder="Ex: Joao da Silva" />
@@ -116,12 +121,12 @@ select.error {
 					<form:select path="dto.situacao" name="situacao" id="situacao"
 						class="form-select">
 						<option value="">Escolha uma opção</option>
-						<form:options items="${situacoes}"/>
+						<form:options items="${situacoes}" />
 					</form:select>
 
 				</div>
 			</div>
-<br/>
+			<br />
 			<div class="row">
 				<div class="col-md-4">
 
@@ -175,7 +180,7 @@ select.error {
 
 		})
 	</script>
-	
+
 
 </body>
 </html>

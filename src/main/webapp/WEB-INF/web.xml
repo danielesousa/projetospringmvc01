@@ -9,6 +9,17 @@
 			org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 		</param-value>
 	</context-param>
+	<filter>
+		<description>
+		</description>
+		<display-name>AuthorizationFilter</display-name>
+		<filter-name>AuthorizationFilter</filter-name>
+		<filter-class>br.com.cotiinformatica.filters.AuthorizationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>

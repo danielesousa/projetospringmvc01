@@ -204,8 +204,12 @@ public class FuncionarioController {
 	
 	
 	@RequestMapping("/funcionario-relatorio")
-	public String relatorio() {
-		return "funcionario-relatorio";
+	public ModelAndView relatorio() {
+		ModelAndView modelAndView = new ModelAndView("funcionario-relatorio");
+		modelAndView.addObject("dto", new FuncionarioConsultaDTO());
+		
+		
+		return modelAndView;
 	}
 
 }

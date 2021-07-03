@@ -38,7 +38,7 @@ input.error {
 							style="width: 260px;" class="mb-2" />
 						<h5 class="card-title">Acesso ao sistema</h5>
 						<hr />
-						<form id="formlogin">
+						<form id="formlogin" action="autenticarUsuario" method="post">
 
 							<label>Email de Acesso</label>
 							<form:input path="dto.email" name="email" id="email" type="text"
