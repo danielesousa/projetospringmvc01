@@ -22,5 +22,9 @@ public class DateHelper {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(data);
 	}
+	public static String toStringPtBR(Date data) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		return sdf.format(data);
+	}
 
 }

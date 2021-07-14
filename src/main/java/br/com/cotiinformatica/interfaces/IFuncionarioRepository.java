@@ -13,4 +13,6 @@ public interface IFuncionarioRepository extends IBaseRepository<Funcionario> {
 	Funcionario findByMatricula(String matricula) throws Exception;
 
 	List<Funcionario> findByDataAdmisssao(Date dataInicio, Date dataFim) throws Exception;
+	
+	Integer countBySituacao(SituacaoFuncionario situacao) throws Exception;
 }

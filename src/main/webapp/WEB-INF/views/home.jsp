@@ -58,11 +58,64 @@
 		</nav>
 	</div>
 	<div class="container mt-4">
-		<h2>Seja bem vindo ao Projeto!</h2>
+		<div id = "grafico">
+		
+		
+		</div>
 	</div>
 
 	<!-- referencia para arquivo JS -->
 	<script src="resources/js/bootstrap.min.js"></script>
+	
+	<!-- referencia para arquivo JQuery -->
+	<script src="resources/js/jquery-3.6.0.min.js"></script>
+	
+	<!-- referencia para os arquivos do highcharts -->
+	<script src="resources/js/highcharts.js"></script>
+	<script src="resources/js/highcharts-3d.js"></script>
+	<script src="resources/js/exporting.js"></script>
+	<script src="resources/js/export-data.js"></script>
+	
+	<script >
+	$(document).ready(function(){
+		var dados = [
+			{data : [${qtd_admitido}], name: 'Funcionarios Admitidos'},
+			{data : [${qtd_afastado}], name: 'Funcionarios Afastados'},
+			{data : [${qtd_ferias}], name: 'Funcionarios de Férias'},
+			{data : [${qtd_demitido}], name: 'Funcionarios Demitidos'}
+		];
+		var array = [];
+		for(var i=0; i<dados.length; i++){
+			array.push([dados[i].name, dados[i].data[0] ]);
+			
+		}
+		new Highcharts.Chart({
+			chart:{
+				type:'pie',
+				renderTo:'grafico'
+			},
+			title:{
+				text:'Grafico de funcionários por situação'
+			},
+			subtitle:{
+				text:'Total de funcionários por situação cadastrada.'
+			},
+			exporting:{enabled:false},
+			credits:{enabled:false},
+			plotOptions: {
+				pie:{
+					innerSize:'60%'
+				}
+			},
+			series:[
+				{data:array}
+			]
+		})
+		
+		
+		
+	})
+	</script>
 
 
 </body>

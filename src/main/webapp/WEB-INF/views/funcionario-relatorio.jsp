@@ -105,7 +105,7 @@ select.error {
 		<h5>Relatório de Funcionários</h5>
 		<hr>
 
-		<form id="formrelatorio">
+		<form id="formrelatorio" action="gerarRelatorioFuncionarios" method="post">
 			<label>Relatório de Funcionários por período de admissão:</label>
 			<div class="row">
 				<div class="col-md-3">

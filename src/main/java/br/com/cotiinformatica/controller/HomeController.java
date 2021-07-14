@@ -13,6 +13,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.cotiinformatica.dto.LoginDTO;
 import br.com.cotiinformatica.entities.Usuario;
+import br.com.cotiinformatica.enums.SituacaoFuncionario;
+import br.com.cotiinformatica.repositories.FuncionarioRepository;
 import br.com.cotiinformatica.repositories.UsuarioRepository;
 
 @Controller
@@ -20,6 +22,9 @@ public class HomeController {
 	
 	@Autowired //Inicializa automaticamente.
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired 
+	private FuncionarioRepository funcionarioRepository;
 	
 	@RequestMapping(value="/") //URL raiz do projeto 
 	public ModelAndView login() {
@@ -67,7 +72,20 @@ public class HomeController {
 	
 	@RequestMapping(value="/home")
 	public ModelAndView home(HttpServletResponse response) throws IOException{
-		return new ModelAndView("home");
+		ModelAndView modelAndView = new ModelAndView("home");
+		try {
+			modelAndView.addObject("qtd_admitido", funcionarioRepository.countBySituacao(SituacaoFuncionario.Admitido));
+			modelAndView.addObject("qtd_afastado", funcionarioRepository.countBySituacao(SituacaoFuncionario.Afastado));
+			modelAndView.addObject("qtd_ferias", funcionarioRepository.countBySituacao(SituacaoFuncionario.Ferias));
+			modelAndView.addObject("qtd_demitido", funcionarioRepository.countBySituacao(SituacaoFuncionario.Demitido));
+			
+			
+			
+		}catch(Exception e) {
+			modelAndView.addObject("mensagem_erro","Erro: " +e.getMessage());
+		}
+		
+		return modelAndView;
 	}
 	//método para fazer o logout do usuario autenticado.
 	@RequestMapping(value="/logout")

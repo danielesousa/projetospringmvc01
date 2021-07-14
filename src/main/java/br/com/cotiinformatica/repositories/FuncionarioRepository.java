@@ -19,10 +19,12 @@ public class FuncionarioRepository implements IFuncionarioRepository {
 
 	// atributo
 	private JdbcTemplate jdbcTemplate;
-	
-	//para que a configuração do dataSource possa ser passada para o objeto jdbcTemplate
-	//é necessario criarmos um método construtor que receba um data source como parametro.
-	
+
+	// para que a configuração do dataSource possa ser passada para o objeto
+	// jdbcTemplate
+	// é necessario criarmos um método construtor que receba um data source como
+	// parametro.
+
 	public FuncionarioRepository(DataSource dataSource) {
 		// inicializando o jdbcTemplate com o dataSource
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -32,12 +34,8 @@ public class FuncionarioRepository implements IFuncionarioRepository {
 	public void create(Funcionario entity) throws Exception {
 		String sql = "insert into funcionario(nome, cpf, matricula, dataadmissao, situacao) values(?,?,?,?,?)";
 
-		Object[] params = { 
-				entity.getNome(), 
-				entity.getCpf(), 
-				entity.getMatricula(), 
-				DateHelper.toString(entity.getDataAdmissao()),
-				entity.getSituacao().toString()
+		Object[] params = { entity.getNome(), entity.getCpf(), entity.getMatricula(),
+				DateHelper.toString(entity.getDataAdmissao()), entity.getSituacao().toString()
 
 		};
 		jdbcTemplate.update(sql, params);
@@ -49,12 +47,8 @@ public class FuncionarioRepository implements IFuncionarioRepository {
 		String sql = "update funcionario set nome=?, cpf=?, matricula= ?, dataadmissao=?, situacao=?"
 				+ "where idfuncionario=?";
 
-		Object[] params = { 
-				entity.getNome(), 
-				entity.getCpf(), 
-				entity.getMatricula(), 
-				DateHelper.toString(entity.getDataAdmissao()),
-				entity.getSituacao().toString(), 
+		Object[] params = { entity.getNome(), entity.getCpf(), entity.getMatricula(),
+				DateHelper.toString(entity.getDataAdmissao()), entity.getSituacao().toString(),
 				entity.getIdFuncionario()
 
 		};
@@ -75,116 +69,128 @@ public class FuncionarioRepository implements IFuncionarioRepository {
 
 	@Override
 	public List<Funcionario> findAll() throws Exception {
-		String sql= "select * from funcionario order by nome";
-		
+		String sql = "select * from funcionario order by nome";
+
 		List<Funcionario> lista = jdbcTemplate.query(sql, new RowMapper<Funcionario>() {
 
 			@Override
 			public Funcionario mapRow(ResultSet rs, int rowNum) throws SQLException {
-				
+
 				return getFuncionario(rs);
 			}
-			
+
 		});
-		
+
 		return lista;
 	}
 
 	@Override
 	public Funcionario findById(Integer id) throws Exception {
 		String sql = "select * from funcionario where idfuncionario = ?";
-		
-	    Object[] params = { id };
-	    
-	    List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
+
+		Object[] params = { id };
+
+		List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
 
 			@Override
 			public Funcionario mapRow(ResultSet rs, int rowNum) throws SQLException {
 				// TODO Auto-generated method stub
 				return getFuncionario(rs);
 			}
-	    	
-	    });
-	    if(lista.size()==1) {    //verificando se o funcionario foi encontrado.
-	    	return lista.get(0); //retornando o primeiro resultado obtido.
-	    }
-		
+
+		});
+		if (lista.size() == 1) { // verificando se o funcionario foi encontrado.
+			return lista.get(0); // retornando o primeiro resultado obtido.
+		}
+
 		return null;
 	}
 
 	@Override
 	public Funcionario findByCpf(String cpf) throws Exception {
 		String sql = "select * from funcionario where cpf= ?";
-		
+
 		Object[] params = { cpf };
-		
-		List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>(){
+
+		List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
 
 			@Override
 			public Funcionario mapRow(ResultSet rs, int rowNum) throws SQLException {
 				// TODO Auto-generated method stub
 				return getFuncionario(rs);
 			}
-			
+
 		});
-		if(lista.size()==1) {
+		if (lista.size() == 1) {
 			lista.get(0);
 		}
-		
+
 		return null;
 	}
 
 	@Override
 	public Funcionario findByMatricula(String matricula) throws Exception {
 		String sql = "select * from funcionario where matricula= ?";
-		
+
 		Object[] params = { matricula };
-		
-		List<Funcionario> lista = jdbcTemplate.query(sql, params , new RowMapper<Funcionario>() {
+
+		List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
 
 			@Override
 			public Funcionario mapRow(ResultSet rs, int rowNum) throws SQLException {
 				// TODO Auto-generated method stub
 				return getFuncionario(rs);
 			}
-			
+
 		});
-		if(lista.size()==1) {
+		if (lista.size() == 1) {
 			lista.get(0);
 		}
 		return null;
 	}
 
 	@Override
-	public List<Funcionario> findByDataAdmisssao (Date dataInicio, Date dataFim) throws Exception {
+	public List<Funcionario> findByDataAdmisssao(Date dataInicio, Date dataFim) throws Exception {
 		String sql = "select * from funcionario where dataadmissao between ? and ? order by dataadmissao";
-		
+
 		Object[] params = { DateHelper.toString(dataInicio), DateHelper.toString(dataFim) };
-		
-		List <Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
+
+		List<Funcionario> lista = jdbcTemplate.query(sql, params, new RowMapper<Funcionario>() {
 
 			@Override
 			public Funcionario mapRow(ResultSet rs, int rowNum) throws SQLException {
 				// TODO Auto-generated method stub
 				return getFuncionario(rs);
 			}
-			
+
 		});
-		
+
 		return lista;
 	}
-	//método privado para fazer a leitura dos dados do funcionario.
-	//em cada método de consulta do repositorio(RowMapper).
-	private Funcionario getFuncionario(ResultSet rs) throws SQLException{
-		Funcionario funcionario = new Funcionario();
+
+	@Override
+	public Integer countBySituacao(SituacaoFuncionario situacao) throws Exception {
+		String sql = "select count(*) from funcionario where situacao = ? ";
+
+		Object[] params = { situacao.toString() };
 		
+		
+        //queryForObject--> utilizado para consultas que retornam apenas um campo.
+		return jdbcTemplate.queryForObject(sql, params, Integer.class);
+	}
+
+	// método privado para fazer a leitura dos dados do funcionario.
+	// em cada método de consulta do repositorio(RowMapper).
+	private Funcionario getFuncionario(ResultSet rs) throws SQLException {
+		Funcionario funcionario = new Funcionario();
+
 		funcionario.setIdFuncionario(rs.getInt("idfuncionario"));
 		funcionario.setNome(rs.getString("nome"));
 		funcionario.setCpf(rs.getString("cpf"));
 		funcionario.setMatricula(rs.getString("matricula"));
 		funcionario.setDataAdmissao(rs.getDate("dataadmissao"));
 		funcionario.setSituacao(SituacaoFuncionario.valueOf(rs.getString("situacao")));
-		
+
 		return funcionario;
 	}
 
